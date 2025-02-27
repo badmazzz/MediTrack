@@ -1,63 +1,63 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavLink, Link } from "react-router-dom";
+import { StoreContext } from "../context/StoreContext";
 
 const Navbar = () => {
+  const { user, logout } = useContext(StoreContext);
+
   return (
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">
-        Navbar
-      </a>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light px-3">
+      <Link className="navbar-brand fw-bold" to="/">
+        MEDTRACK
+      </Link>
       <button
-        class="navbar-toggler"
+        className="navbar-toggler"
         type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
         aria-expanded="false"
         aria-label="Toggle navigation"
       >
-        <span class="navbar-toggler-icon"></span>
+        <span className="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">
-              Home <span class="sr-only">(current)</span>
-            </a>
+      <div className="collapse navbar-collapse" id="navbarNav">
+        <ul className="navbar-nav ms-auto">
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/" exact>
+              Home
+            </NavLink>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              Features
-            </a>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/products">
+              Products
+            </NavLink>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              Pricing
-            </a>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/cart">
+              Cart
+            </NavLink>
           </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdownMenuLink"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Dropdown link
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="#">
-                Action
-              </a>
-              <a class="dropdown-item" href="#">
-                Another action
-              </a>
-              <a class="dropdown-item" href="#">
-                Something else here
-              </a>
-            </div>
-          </li>
+          {user ? (
+            <>
+              <li className="nav-item">
+                <span className="nav-link fw-bold text-primary">
+                  {user.email}
+                </span>
+              </li>
+              <li className="nav-item">
+                <button className="btn btn-outline-danger ms-2" onClick={logout}>
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/login">
+                Login
+              </NavLink>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
