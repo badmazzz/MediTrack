@@ -1,8 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
-import fs from "fs";
-
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
@@ -75,7 +73,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { password, email } = req.body;
-  console.log(req.body);
+
   if (!email) throw new ApiError(400, "Email is reqired");
 
   const user = await User.findOne({ email });
@@ -283,10 +281,6 @@ const deleteAccount = asyncHandler(async (req, res) => {
 
 //Only admin can update user role
 const updateUserRole = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") {
-    throw new ApiError(403, "Only admins can update user roles");
-  }
-
   const { email, newRole } = req.body;
 
   if (!["admin", "customer", "employee"].includes(newRole)) {
@@ -309,7 +303,6 @@ const updateUserRole = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user }, "User role updated"));
 });
 
-
 export {
   registerUser,
   loginUser,
@@ -320,6 +313,5 @@ export {
   passwordChange,
   refreshAccessToken,
   deleteAccount,
-  updateUserRole
-
+  updateUserRole,
 };

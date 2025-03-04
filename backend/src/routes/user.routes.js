@@ -12,7 +12,7 @@ import {
   updateUserRole,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
-import { verifyJWT } from "../middlewares/auth.middlewares.js";
+import { isAdmin, verifyJWT } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
 
@@ -33,6 +33,6 @@ router
   .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
 
 router.route("/delete-account").delete(verifyJWT, deleteAccount);
-router.route("/update-role").patch(verifyJWT, updateUserRole);
+router.route("/update-role").patch(verifyJWT, isAdmin, updateUserRole);
 
 export default router;
