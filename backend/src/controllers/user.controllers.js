@@ -28,6 +28,7 @@ const generateTokens = async (userId) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   const { email, name, password, street, zipcode, city, phone } = req.body;
+  console.log(req.body);
   if (
     [email, name, password, street, zipcode, city, phone].some(
       (field) => field?.trim() === ""
@@ -38,6 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const existedUser = await User.findOne({ email });
   if (existedUser) throw new ApiError(409, "User with email exists");
 
+  console.log(req.files);
   const avatarLocalPath = req.files?.avatar[0]?.path;
   if (!avatarLocalPath) throw new ApiError(400, "Avatar is required");
 
@@ -65,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (!createdUser)
     return new ApiError(500, "Something went wrong while registering user");
-
+ 
   return res
     .status(201)
     .json(new ApiResponse(200, createdUser, "User created successfully"));
@@ -283,7 +285,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
 const updateUserRole = asyncHandler(async (req, res) => {
   const { email, newRole } = req.body;
 
-  if (!["admin", "customer", "employee"].includes(newRole)) {
+  if (!["admin", "customer", "employee", "supplier"].includes(newRole)) {
     throw new ApiError(400, "Invalid role");
   }
   const userId = await User.findOne({ email }).select("_id");

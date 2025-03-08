@@ -21,10 +21,12 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
 import inventoryRouter from "./routes/inventory.routes.js";
+import supplierRouter from "./routes/supplier.routes.js";
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/inventory", inventoryRouter);
+app.use("/api/v1/suppliers", supplierRouter);
 
 
 export default app;

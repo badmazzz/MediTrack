@@ -5,20 +5,6 @@
 //  Low Stock Alerts
 //  Product Categories
 
-//  Supplier Management
-// Fields:
-// name (String)
-// contactPerson (String)
-// email (String)
-// phone (String)
-// address (String)
-// Endpoints:
-// GET /api/suppliers (list all suppliers)
-// POST /api/suppliers (add a new supplier)
-// PUT /api/suppliers/:id (update a supplier)
-// DELETE / api / suppliers /: id(delete a supplier)
-// Dashboard Analytics
-
 // Functionality: Provide a dashboard with key inventory metrics.
 // Metrics:
 // Total number of products.
@@ -75,13 +61,9 @@ const restockProduct = asyncHandler(async (req, res) => {
 
   const product = await updateProductQuantity(productId, quantity, false);
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      product,
-      "Product restocked successfully"
-    )
-  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product restocked successfully"));
 });
 
 const expiryDateAlerts = asyncHandler(async (req, res) => {
@@ -129,7 +111,37 @@ const inventoryLogs = asyncHandler(async (req, res) => {
 });
 
 const lowStockAlerts = asyncHandler(async (req, res) => {
-  
-} );
+  const threshold = req.query.threshold ? Number(req.query.threshold) : 100;
 
-export { productStock, restockProduct, expiryDateAlerts };
+  if (isNaN(threshold) || threshold < 1) {
+    throw new ApiError(400, "Invalid threshold value");
+  }
+
+  const lowStockProducts = await Product.find({ quantity: { $lt: threshold } });
+
+  if (!lowStockProducts.length) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, [], "No low-stock products found"));
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, lowStockProducts, "Low-stock products retrieved")
+    );
+});
+
+const productCategories = asyncHandler(async (req, res) => {
+  const categories = await Product.distinct("category");
+
+  res.status(200).json(new ApiResponse(200, categories));
+});
+
+export {
+  productStock,
+  restockProduct,
+  expiryDateAlerts,
+  lowStockAlerts,
+  inventoryLogs,
+};
