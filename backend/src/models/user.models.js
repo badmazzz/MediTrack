@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import e from "express";
 
 const userSchema = new mongoose.Schema(
   {
@@ -50,6 +51,7 @@ const userSchema = new mongoose.Schema(
     ],
     role: {
       type: String,
+      enum: ["customer", "supplier", "admin", "employee"],
       default: "customer",
     },
     avatar: {

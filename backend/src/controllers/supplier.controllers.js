@@ -157,6 +157,7 @@ const getSupplierProductsById = asyncHandler(async (req, res) => {
           {
             $match: {
               _id: new mongoose.Types.ObjectId(productId), 
+              supplierId: new mongoose.Types.ObjectId(supplierId),
             },
           },
           {

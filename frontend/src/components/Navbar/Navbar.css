@@ -1,0 +1,60 @@
+.navbar {
+  font-family: "Poppins", sans-serif;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: 0.3s ease-in-out;
+}
+
+.navbar-collapse{
+    color: #000;
+    font-size: 1.5em;
+}
+
+.nav-link:hover {
+  color: #868686 !important;
+}
+
+.user-dropdown {
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  transition: 0.3s ease-in-out;
+}
+
+.dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0; 
+  text-align: center;
+}
+
+.login{
+    font-size: 1.5em;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center align items horizontally */
+  padding: 0.5rem 1rem; /* Adjust padding for better alignment */
+  transition: 0.3s ease-in-out;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+  background: #ffe6e6;
+}

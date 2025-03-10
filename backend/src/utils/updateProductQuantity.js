@@ -18,6 +18,9 @@ const updateProductQuantity = async (productId, quantity, order) => {
   }
 
   if (order) {
+    if (product.quantity < quantity) {
+      throw new ApiError(400, `Not enough stock available for ${product.name}`);
+    }
     product.quantity -= quantity;
   } else {
     product.quantity += quantity;

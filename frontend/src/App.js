@@ -1,10 +1,10 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Products from "./components/Products";
-import Cart from "./components/Cart";
-import FormComponent from "./pages/Login";
+import Navbar from "./components/Navbar/Navbar";
+import Home from "./components/Home/Home";
+import Products from "./pages/Products/Products";
+import Cart from "./components/Cart/Cart";
+import FormComponent from "./pages/Login/Login";
 
 
 const App = () => {
