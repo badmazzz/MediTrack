@@ -3,16 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import {
   uploadOnCloudinary,
-  deleteFromCloudinary,
 } from "../utils/cloudinary.js";
 import { Product } from "../models/product.models.js";
-
-// 1️⃣ Basic CRUD Operations
-// ✔️ Create a Product
-// ✔️ Get All Products
-// ✔️ Get a Single Product by ID
-// ✔️ Update a Product
-// ✔️ Delete a Product
 
 const createProduct = asyncHandler(async (req, res) => {
   const {

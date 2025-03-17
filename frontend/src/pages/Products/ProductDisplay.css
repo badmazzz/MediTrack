@@ -1,0 +1,14 @@
+.product-display {
+  margin-top: 30px;
+}
+
+.product-display h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.product-display-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}

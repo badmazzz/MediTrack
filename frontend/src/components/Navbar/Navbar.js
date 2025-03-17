@@ -4,16 +4,16 @@ import { StoreContext } from "../../context/StoreContext";
 import { FaUserCircle, FaEdit, FaSignOutAlt } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Navbar.css";
-import Logo from "../../assets/logo.js";
+import { assets } from "../../assets/assets";
 
 const Navbar = () => {
-  const { user, logout } = useContext(StoreContext);
+  const { user, handleLogout, cartItems } = useContext(StoreContext);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light px-3 shadow-sm">
       <div className="container-fluid">
         <Link className="navbar-brand fw-bold fs-3 text-primary me-auto" to="/">
-          {Logo()}
+          {assets.Logo()}
         </Link>
 
         <div className="collapse navbar-collapse" id="navbarNav">
@@ -28,25 +28,60 @@ const Navbar = () => {
                 Products
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/cart">
+            <li className="nav-item dropdown">
+              <NavLink
+                className="nav-link dropdown-toggle"
+                to="#"
+                id="categoriesDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
                 Categories
               </NavLink>
+              <ul
+                className="dropdown-menu"
+                aria-labelledby="categoriesDropdown"
+              >
+                <li>
+                  <NavLink className="dropdown-item" to="/categories">
+                    Medicine
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink className="dropdown-item" to="/categories">
+                    Supply
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink className="dropdown-item" to="/categories">
+                    Equipment
+                  </NavLink>
+                </li>
+              </ul>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/" exact>
+              <NavLink className="nav-link" to="/order" exact>
                 Order
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/" exact>
-                Cart
               </NavLink>
             </li>
           </ul>
         </div>
 
         <div className="d-flex align-items-center ms-auto">
+          <NavLink className="nav-link me-3 position-relative p-3" to="/cart">
+            <img
+              src={assets.basket_icon}
+              alt="Basket"
+              style={{ width: "24px", height: "24px" }}
+            />
+            {cartItems.length > 0 && (
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {cartItems.length}
+              </span>
+            )}
+          </NavLink>
+
           {user ? (
             <div className="nav-item dropdown">
               <div
@@ -78,7 +113,7 @@ const Navbar = () => {
                 <li>
                   <button
                     className="dropdown-item fs-5 text-danger"
-                    onClick={logout}
+                    onClick={handleLogout}
                   >
                     <FaSignOutAlt className="me-2" /> Logout
                   </button>

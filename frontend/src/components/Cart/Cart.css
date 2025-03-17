@@ -1,0 +1,177 @@
+.cart {
+  margin-top: 10px;
+  padding: 20px;
+  font-size: 1.2em;
+}
+
+.cart-items-title {
+  display: grid;
+  grid-template-columns: 0.8fr 1.5fr 1fr 1fr 1fr 0.5fr;
+  align-items: center;
+  color: var(--gray);
+  font-size: max(1.2vw, 14px); /* Increased font size */
+  font-weight: 600;
+}
+
+.cart-items-item {
+  margin: 10px 0;
+  color: var(--dark);
+  font-size: 1.3em; 
+  font-weight: 400;
+}
+
+.cart-items-item img {
+  width: 100px; /* Slightly larger images */
+  height: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.cart-items-item .close {
+  width: 35px;
+  height: 35px;
+}
+
+.cart hr {
+  height: 1px;
+  background-color: #e2e2e2;
+  border: none;
+}
+
+.cart-items-item .Remove {
+  cursor: pointer;
+  margin: auto;
+  width: 50%;
+}
+
+.NoItems {
+  padding: 10px 0;
+  color: var(--gray);
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.cart-bottom {
+  margin-top: 80px;
+  display: flex;
+  justify-content: space-between;
+  gap: max(12vw, 20px);
+  font-size: 1.2em;
+}
+
+.cart-total {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cart-total h2 {
+  font-size: 1.4em; /* Bigger heading */
+}
+
+.cart-total-details {
+  display: flex;
+  justify-content: space-between;
+  color: var(--gray);
+  font-size: 1.1em;
+}
+
+.cart-total hr {
+  margin: 10px 0;
+}
+
+.cart-total button {
+  display: block; /* Ensures button is displayed */
+  font-size: 1.2em;
+  background-color: var(--primary);
+  width: 100%;
+  padding: 14px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  visibility: visible; /* Ensure it's not hidden */
+}
+
+
+.cart-total button:disabled {
+  opacity: 50%;
+  cursor: auto;
+}
+
+.cart-promocode {
+  flex: 1;
+  font-size: 1.1em;
+}
+
+.cart-promocode p {
+  color: var(--gray);
+}
+
+.cart-promocode-input {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+.cart-promocode-input input {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding-left: 12px;
+  flex: 1;
+  font-size: 1.1em;
+}
+
+.cart-promocode-input button {
+  width: max(10vw, 160px);
+  padding: 14px 5px;
+  background-color: var(--dark);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.popup p {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+@media (max-width: 750px) {
+  .cart-items-item img {
+    width: 70px;
+    height: 70px;
+    border-radius: 4px;
+  }
+
+  .cart-items-item .Remove {
+    width: 80%;
+  }
+
+  .cart-bottom {
+    flex-direction: column-reverse;
+  }
+
+  .cart-promocode {
+    justify-content: start;
+  }
+}
