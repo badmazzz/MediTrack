@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { NavLink, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
-import "../../styles/login.css";
+import "./login.css";
 import Image from "../../assets/image.png";
 
 const Login = () => {

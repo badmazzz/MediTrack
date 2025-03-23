@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { assets } from "../../assets/assets";
@@ -15,9 +15,12 @@ const Cart = () => {
     placeOrder,
     showPopup,
     totalAmount,
+    getProduct,
   } = useContext(StoreContext);
 
-  console.log(cartItems);
+  useEffect(() => {
+    getProduct();
+  }, []);
 
   const totalQuantity = getTotalQuantity();
 
@@ -52,10 +55,7 @@ const Cart = () => {
                     <p>₹{item.price}</p>
                     <p>{quantity}</p>
                     <p>₹{item.price * quantity}</p>
-                    <p
-                      className="Remove"
-                      onClick={() => removeFromCart(_id)}
-                    >
+                    <p className="Remove" onClick={() => removeFromCart(_id)}>
                       <img
                         src={assets.remove_icon_cross}
                         alt="remove_icon_cross"
@@ -87,15 +87,14 @@ const Cart = () => {
             <hr />
             <div className="cart-total-details">
               <b>Total</b>
-              <b>
-                ₹
-                {totalAmount === 0
-                  ? 0
-                  : totalAmount + deliveryFee}
-              </b>
+              <b>₹{totalAmount === 0 ? 0 : totalAmount + deliveryFee}</b>
             </div>
           </div>
-          <button disabled={totalAmount === 0} onClick={handleOrder}>
+          <button
+            className="btn btn-warning rounded-pill px-5 py-3 text-dark fw-semibold d-inline-flex align-items-center shadow-sm hover-scale"
+            disabled={totalAmount === 0}
+            onClick={handleOrder}
+          >
             PROCEED TO CHECKOUT
           </button>
         </div>

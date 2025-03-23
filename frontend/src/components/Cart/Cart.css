@@ -82,17 +82,15 @@
 }
 
 .cart-total button {
-  display: block; /* Ensures button is displayed */
-  font-size: 1.2em;
-  background-color: var(--primary);
-  width: 100%;
-  padding: 14px 0;
-  border-radius: 6px;
+  border: none;
+  color: black;
+  font-weight: 600;
+  background-color: var(--orange);
+  width: max(15vw, 200px);
+  padding: 12px 0px;
+  border-radius: 4px;
   cursor: pointer;
-  text-align: center;
-  visibility: visible; /* Ensure it's not hidden */
 }
-
 
 .cart-total button:disabled {
   opacity: 50%;
@@ -152,7 +150,7 @@
 }
 
 .popup p {
-  color: var(--primary);
+  color: var(--orange);
   font-weight: 700;
 }
 

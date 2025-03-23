@@ -1,0 +1,92 @@
+/* Remove all top padding */
+.no-top-padding {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Smooth animations */
+.fade-in-left {
+  animation: fade-in-left 0.8s ease-out;
+}
+
+.fade-in-right {
+  animation: fade-in-right 0.8s ease-out;
+}
+
+/* Keyframes for smooth fade-in animations */
+@keyframes fade-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Button hover effect */
+.btn:hover {
+  transform: translateY(-3px);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Hover scale effect */
+.hover-scale {
+  transition: transform 0.3s;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Ensure the SVG icon in the button is aligned properly */
+.btn svg {
+  vertical-align: middle;
+}
+
+/* Make the image responsive */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Add some spacing between sections */
+.bg-light {
+  background-color: #f8f9fa !important; /* Light background */
+}
+
+/* Button styling */
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  border-color: #e0a800;
+}
+
+/* Text colors */
+.text-dark {
+  color: #343a40 !important;
+}
+
+.text-primary {
+  color: #0d6efd !important;
+}
+
+.text-secondary {
+  color: #6c757d !important;
+}

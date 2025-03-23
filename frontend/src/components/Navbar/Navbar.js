@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { NavLink, Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 import { FaUserCircle, FaEdit, FaSignOutAlt } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,7 +7,15 @@ import "./Navbar.css";
 import { assets } from "../../assets/assets";
 
 const Navbar = () => {
-  const { user, handleLogout, cartItems } = useContext(StoreContext);
+  const { user, handleLogout, cartItems, setCategories } =
+    useContext(StoreContext);
+  const location = useLocation(); // Get current path
+  const [activeCategory, setActiveCategory] = useState("");
+
+  const handleCategoryClick = (category) => {
+    setCategories(category);
+    setActiveCategory(category);
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light px-3 shadow-sm">
@@ -44,17 +52,29 @@ const Navbar = () => {
                 aria-labelledby="categoriesDropdown"
               >
                 <li>
-                  <NavLink className="dropdown-item" to="/categories">
-                    Medicine
+                  <NavLink
+                    className="dropdown-item"
+                    to="/categories"
+                    onClick={() => handleCategoryClick("Medicines")}
+                  >
+                    Medicines
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" to="/categories">
-                    Supply
+                  <NavLink
+                    className="dropdown-item"
+                    to="/categories"
+                    onClick={() => handleCategoryClick("Supplies")}
+                  >
+                    Supplies
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" to="/categories">
+                  <NavLink
+                    className="dropdown-item"
+                    to="/categories"
+                    onClick={() => handleCategoryClick("Equipment")}
+                  >
                     Equipment
                   </NavLink>
                 </li>

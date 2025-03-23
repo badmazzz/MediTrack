@@ -1,9 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {
-  uploadOnCloudinary,
-} from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Product } from "../models/product.models.js";
 
 const createProduct = asyncHandler(async (req, res) => {
@@ -185,6 +183,8 @@ const deleteProduct = asyncHandler(async (req, res) => {
 const searchProducts = asyncHandler(async (req, res) => {
   const { name, category, minPrice, maxPrice } = req.query;
 
+  minPrice = minPrice ? minPrice : 0;
+  maxPrice = maxPrice ? maxPrice : 1000000;
   const filter = {};
   if (name) filter.name = { $regex: name, $options: "i" }; // Case-insensitive search
   if (category) filter.category = { $regex: category, $options: "i" };
@@ -213,19 +213,37 @@ const searchProducts = asyncHandler(async (req, res) => {
 const filterAndSortProducts = asyncHandler(async (req, res) => {
   const { category, minPrice, maxPrice, sortBy, sortOrder } = req.query;
 
+  // Define valid categories
+  const validCategories = ["Supplies", "Medicines", "Equipment"];
+
   const filter = {};
-  if (category) filter.category = { $regex: category, $options: "i" };
+
+  // Category filtering with validation
+  if (category) {
+    const categories = category.split(",").map((c) => c.trim());
+    const validCategoriesFilter = categories.filter((c) =>
+      validCategories.includes(c)
+    );
+
+    if (validCategoriesFilter.length > 0) {
+      filter.category = { $in: validCategoriesFilter };
+    }
+  }
+
+  // Price filtering
   if (minPrice || maxPrice) {
     filter.price = {};
     if (minPrice) filter.price.$gte = parseFloat(minPrice);
     if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
   }
 
+  // Sorting logic
   const sortOptions = {};
   if (sortBy) {
     sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
   }
 
+  // Fetch products
   const products = await Product.find(filter).sort(sortOptions);
 
   if (!products || products.length === 0) {

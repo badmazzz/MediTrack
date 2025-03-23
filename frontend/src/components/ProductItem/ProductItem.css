@@ -1,6 +1,6 @@
 .product-item {
   width: 100%;
-  max-width: 250px;
+
   height: 400px;
   margin: auto;
   border-radius: 15px;
@@ -93,7 +93,7 @@
 }
 
 .product-item-price {
-  color: #0019fb;
+  color: var(--blue);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 5px;

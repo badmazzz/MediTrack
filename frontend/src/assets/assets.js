@@ -5,6 +5,7 @@ import remove_icon_red from "./remove_icon_red.png";
 import basket_icon from "./basket_icon.png";
 import Logo from "./logo";
 import remove_icon_cross from "./remove_icon_cross.png";
+import hero from "./hero.svg";
 
 export const assets = {
   add_icon_green,
@@ -14,4 +15,5 @@ export const assets = {
   basket_icon,
   Logo,
   remove_icon_cross,
+  hero,
 };

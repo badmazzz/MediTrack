@@ -1,0 +1,139 @@
+/* Global Variables */
+:root {
+  --orange: #ffc107;
+  --dark: #343a40;
+  --light-gray: #f8f9fa;
+  --text-muted: #6c757d;
+  --hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Styling */
+.bg-white {
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* Heading & Text */
+.text-orange {
+  color: var(--orange) !important;
+}
+
+.text-dark {
+  color: var(--dark) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+h2 {
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+}
+
+/* Icon Styling */
+.bg-orange {
+  background-color: var(--orange) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bg-orange:hover {
+  transform: scale(1.1);
+  box-shadow: var(--hover-shadow);
+}
+
+.bg-orange svg {
+  transition: transform 0.3s ease;
+}
+
+.bg-orange:hover svg {
+  transform: rotate(15deg);
+}
+
+/* Form Styling */
+form {
+  background: var(--light-gray);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--hover-shadow);
+  transition: all 0.3s ease;
+}
+
+form:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Input & Textarea */
+.form-control {
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+/* Button */
+.btn-orange {
+  background-color: var(--orange) !important;
+  color: #fff !important;
+  border: none;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: var(--hover-shadow);
+}
+
+.btn-orange:hover {
+  background-color: #e0a800 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(255, 193, 7, 0.4);
+}
+
+/* Contact Info Section */
+.d-flex {
+  transition: all 0.3s ease;
+}
+
+.d-flex:hover {
+  transform: translateY(-5px);
+}
+
+.d-flex div h4 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.d-flex div p {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+form input{
+  border: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 2rem;
+  }
+
+  .form-control, .btn-orange {
+    font-size: 14px;
+  }
+
+  .bg-orange {
+    padding: 10px;
+  }
+}

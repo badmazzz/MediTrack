@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { FaPills, FaFirstAid, FaStethoscope } from "react-icons/fa";
 
 axios.defaults.withCredentials = true;
 
@@ -34,9 +35,15 @@ export const StoreProvider = ({ children }) => {
       setUser(JSON.parse(storedUser));
     }
   }, []);
+
   useEffect(() => {
     calculateTotalAmount();
   }, [cartItems, products]);
+
+  useEffect(() => {
+    filter();
+    category();
+  }, [categories]);
 
   const addToCart = (itemId) => {
     setCartItems((prev) => {
@@ -51,7 +58,6 @@ export const StoreProvider = ({ children }) => {
         );
       }
     });
-    console.log(cartItems);
   };
 
   const removeFromCart = (itemId) => {
@@ -198,7 +204,6 @@ export const StoreProvider = ({ children }) => {
     try {
       const response = await axios.get(`${meditrack}/products/`);
       setProducts(response.data.data);
-      console.log(products);
     } catch (err) {
       console.error("Error fetching product list list:", err);
     }
@@ -206,25 +211,89 @@ export const StoreProvider = ({ children }) => {
 
   const placeOrder = async () => {
     const data = {
-      cartItems,
+      products: cartItems.map((item) => ({
+        product: item._id,
+        quantity: item.quantity,
+      })),
       totalAmount,
-      address: user.address,
+      shippingAddress: `${user.address[0].street}, ${user.address[0].city}, ${user.address[0].zipcode}`,
     };
+
     console.log(data);
-    // try {
-    //   const orderRes = await axios.post(`${ecafe}/order/create`, data, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   toast.success(orderRes.data.message);
-    // } catch (err) {
-    //   console.log("Order not placed...", err);
-    //   if (err.response && err.response.status === 401) {
-    //     setShowLogin(true);
-    //   }
-    //   toast.error(parseErrorMessage(err.response.data));
-    // }
+    try {
+      const orderRes = await axios.post(`${meditrack}/orders/`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      toast.success(orderRes.data.message);
+    } catch (err) {
+      console.log("Order not placed...", err);
+      if (err.response && err.response.status === 401) {
+        setShowLogin(true);
+      }
+      toast.error(parseErrorMessage(err.response.data));
+    }
+  };
+
+  const filter = async () => {
+    if (categories) {
+      try {
+        const response = await axios.get(`${meditrack}/products/filter`, {
+          params: { category: categories },
+        });
+
+        if (response.status === 200) {
+          const products = response.data.data;
+
+          if (products.length === 0) {
+            toast.info("No products found for the selected category.");
+          } else {
+            console.log("Filtered Products:", products);
+            setProducts(products);
+            toast.success("Products filtered successfully!");
+          }
+        } else {
+          toast.error("Failed to filter products.");
+        }
+      } catch (error) {
+        console.error("Error while filtering products:", error);
+        toast.error("An error occurred while filtering products.");
+      }
+    }
+  };
+
+  const category = (products) => {
+    if (!products || !Array.isArray(products)) {
+      return [];
+    }
+
+    const categories = [
+      ...new Set(products.map((product) => product.category)),
+    ].map((category) => {
+      let icon;
+      switch (category) {
+        case "Medicine":
+          icon = <FaPills size={40} />;
+          break;
+        case "Supplies":
+          icon = <FaFirstAid size={40} />;
+          break;
+        case "Equipment":
+          icon = <FaStethoscope size={40} />;
+          break;
+        default:
+          icon = <FaPills size={40} />;
+      }
+
+      return {
+        name: category,
+        icon,
+        description: `Explore our wide range of ${category.toLowerCase()}.`,
+      };
+    });
+
+    return categories; 
   };
 
   return (
@@ -265,7 +334,10 @@ export const StoreProvider = ({ children }) => {
         showPopup,
         setShowPopup,
         categories,
-        setCategories
+        setCategories,
+        placeOrder,
+        filter,
+        category,
       }}
     >
       {children}

@@ -7,7 +7,7 @@ const ProductItem = ({
   id,
   name,
   price,
-  description,
+
   quantity,
   expiryDate,
   productImage,
@@ -16,9 +16,6 @@ const ProductItem = ({
 
   const cartItem = cartItems.find((item) => item._id === id);
   const itemQuantity = cartItem ? cartItem.quantity : 0;
-
-  console.log("Cart Items:", cartItems); // Debugging line
-  console.log("Cart Item for this product:", cartItem); // Debugging line
 
   return (
     <div className="product-item">
@@ -49,15 +46,14 @@ const ProductItem = ({
       </div>
       <div className="product-item-info">
         <div className="product-item-name-rating">
-          <p>{name}</p>
+          <p className="fs-3">{name}</p>
           <img src={assets.rating_starts} alt="rating_starts" />
         </div>
-        <p className="product-item-desc">{description}</p>
-        <p className="product-item-price">₹ {price}</p>
-        <p className="product-item-quantity">
+        <p className="product-item-price ">₹ {price}</p>
+        <p className="product-item-quantity fs-5">
           <strong>Quantity:</strong> {quantity} in stock
         </p>
-        <p className="product-item-expiry">
+        <p className="product-item-expiry fs-5">
           <strong>Expiry Date:</strong>{" "}
           {new Date(expiryDate).toLocaleDateString()}
         </p>
