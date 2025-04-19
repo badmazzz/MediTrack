@@ -90,3 +90,11 @@
 .text-secondary {
   color: #6c757d !important;
 }
+
+.container, .row {
+  overflow-x: hidden;
+}
+
+.container, .row, .col {
+  max-width: 100%;
+}

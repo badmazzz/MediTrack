@@ -13,6 +13,8 @@ import {
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { isAdmin, verifyJWT } from "../middlewares/auth.middlewares.js";
+import { createContact } from "../controllers/contact.controllers.js";
+
 
 const router = Router();
 
@@ -31,6 +33,7 @@ router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 router
   .route("/avatar")
   .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+  router.route("/contact").post(verifyJWT, createContact)
 
 router.route("/delete-account").delete(verifyJWT, deleteAccount);
 router.route("/update-role").patch(verifyJWT, isAdmin, updateUserRole);

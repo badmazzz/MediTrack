@@ -256,14 +256,6 @@ const allOrders = asyncHandler(async (req, res) => {
       },
     },
     {
-      $lookup: {
-        from: "products",
-        localField: "products.product",
-        foreignField: "_id",
-        as: "productDetails",
-      },
-    },
-    {
       $unwind: "$products",
     },
     {
@@ -275,7 +267,7 @@ const allOrders = asyncHandler(async (req, res) => {
       },
     },
     {
-      $unwind: "$productInfo", //Use if you want to get product details
+      $unwind: "$productInfo",
     },
     {
       $project: {
@@ -285,10 +277,15 @@ const allOrders = asyncHandler(async (req, res) => {
         paymentStatus: 1,
         shippingAddress: 1,
         totalAmount: 1,
+        createdAt: {
+          $dateToString: { format: "%d-%m-%Y", date: "$createdAt" },
+        },
         products: {
-          product: 1,
+          product: "$products.product",
           quantity: "$products.quantity",
           price: "$products.price",
+          name: "$productInfo.name",
+          image: "$productInfo.productImage",
         },
       },
     },
@@ -300,6 +297,7 @@ const allOrders = asyncHandler(async (req, res) => {
         paymentStatus: { $first: "$paymentStatus" },
         shippingAddress: { $first: "$shippingAddress" },
         totalAmount: { $first: "$totalAmount" },
+        createdAt: { $first: "$createdAt" },
         products: { $push: "$products" },
       },
     },
@@ -311,7 +309,7 @@ const allOrders = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, orders, "All orders"));
 });
 
-const updatedProducts = asyncHandler(async (req, res) => { });
+const updatedProducts = asyncHandler(async (req, res) => {});
 
 export {
   createOrder,

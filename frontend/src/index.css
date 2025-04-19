@@ -5,4 +5,16 @@
   --dark: #1f1f1f;
   --gray: #666666;
   --orange: #ffc107;
+  --light-gray: #f8f9fa;
+  --text-muted: #6c757d;
+  --hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+body, .container, .row {
+  overflow-x: hidden;
+}
+
+.container, .row, .col {
+  max-width: 100%;
 }

@@ -7,17 +7,15 @@ const Footer = () => {
   return (
     <section className="py-5 bg-light">
       <div className="container">
-        <div className="row g-5">
-          <div className="col-lg-4" data-aos="fade-right">
+        <div className="row g-4">
+          <div className="col-12 col-lg-4">
             {assets.Logo()}
-
-            <p className="text-muted fs-4 text-align py-4">
+            <p className="text-muted fs-4 text-justify py-4">
               <strong>MediTrack</strong> is your trusted partner for streamlined
               medical distribution. Our platform offers real-time stock updates,
               automated order management, and seamless delivery tracking for C&F
               companies, ensuring efficient and accurate operations.
             </p>
-
             <div className="d-flex gap-3 mt-4">
               {[
                 { icon: <FaTwitter />, platform: "Twitter" },
@@ -37,7 +35,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="col-lg-2" data-aos="fade-right">
+          <div className="col-6 col-lg-2 mt-4 mt-lg-0">
             <h5 className="text-uppercase text-muted fs-4">Company</h5>
             <ul className="list-unstyled mt-3">
               {["About", "Features", "Works", "Career"].map((item, index) => (
@@ -53,7 +51,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className="col-lg-2" data-aos="fade-left">
+          <div className="col-6 col-lg-2 mt-4 mt-lg-0">
             <h5 className="text-uppercase text-muted fs-4">Help</h5>
             <ul className="list-unstyled mt-3">
               {[

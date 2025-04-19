@@ -1,11 +1,4 @@
-/* Global Variables */
-:root {
-  --orange: #ffc107;
-  --dark: #343a40;
-  --light-gray: #f8f9fa;
-  --text-muted: #6c757d;
-  --hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
+
 
 /* Section Styling */
 .bg-white {

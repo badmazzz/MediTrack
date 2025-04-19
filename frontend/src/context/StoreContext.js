@@ -27,6 +27,12 @@ export const StoreProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+  const [orderDetails, setOrderDetails] = useState([]);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
     getProduct();
@@ -34,6 +40,7 @@ export const StoreProvider = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    getOrders();
   }, []);
 
   useEffect(() => {
@@ -206,6 +213,7 @@ export const StoreProvider = ({ children }) => {
       setProducts(response.data.data);
     } catch (err) {
       console.error("Error fetching product list list:", err);
+      toast.error(parseErrorMessage(err.response.data));
     }
   };
 
@@ -293,7 +301,31 @@ export const StoreProvider = ({ children }) => {
       };
     });
 
-    return categories; 
+    return categories;
+  };
+
+  const contact = async (data) => {
+    try {
+      const response = await axios.post(`${meditrack}/users/contact`, data);
+      toast.success(response.data.message);
+    } catch (err) {
+      console.error("Error while creating contact", err);
+      if (err.response && err.response.status === 401) {
+        setShowLogin(true);
+      }
+      toast.error(parseErrorMessage(parseErrorMessage(err.response.data)));
+    }
+  };
+
+  const getOrders = async () => {
+    try {
+      const response = await axios.get(`${meditrack}/orders/`);
+      setOrderDetails(response.data.data);
+      console.log("Order Details:", response.data.data);
+    } catch (err) {
+      console.error("Error fetching order details:", err);
+      toast.error(parseErrorMessage(err.response.data));
+    }
   };
 
   return (
@@ -338,6 +370,10 @@ export const StoreProvider = ({ children }) => {
         placeOrder,
         filter,
         category,
+        contact,
+        getOrders,
+        orderDetails,
+        setOrderDetails,
       }}
     >
       {children}

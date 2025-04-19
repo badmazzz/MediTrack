@@ -7,7 +7,7 @@ import "./Navbar.css";
 import { assets } from "../../assets/assets";
 
 const Navbar = () => {
-  const { user, handleLogout, cartItems, setCategories } =
+  const { user, handleLogout, cartItems, setCategories, getProduct } =
     useContext(StoreContext);
   const location = useLocation(); // Get current path
   const [activeCategory, setActiveCategory] = useState("");
@@ -15,6 +15,10 @@ const Navbar = () => {
   const handleCategoryClick = (category) => {
     setCategories(category);
     setActiveCategory(category);
+  };
+
+  const product = () => {
+    getProduct();
   };
 
   return (
@@ -32,7 +36,11 @@ const Navbar = () => {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/products">
+              <NavLink
+                className="nav-link"
+                to="/products"
+                onClick={product}
+              >
                 Products
               </NavLink>
             </li>
@@ -81,7 +89,7 @@ const Navbar = () => {
               </ul>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/order" exact>
+              <NavLink className="nav-link" to="/orders" exact>
                 Order
               </NavLink>
             </li>
@@ -96,7 +104,7 @@ const Navbar = () => {
               style={{ width: "24px", height: "24px" }}
             />
             {cartItems.length > 0 && (
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              <span className="position-absolute top-0 badge rounded-pill bg-danger">
                 {cartItems.length}
               </span>
             )}
@@ -147,7 +155,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Navbar Toggler for Mobile */}
         <button
           className="navbar-toggler"
           type="button"
