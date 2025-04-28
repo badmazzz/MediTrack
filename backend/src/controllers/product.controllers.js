@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Product } from "../models/product.models.js";
+import mongoose from "mongoose";
 
 const createProduct = asyncHandler(async (req, res) => {
   const {
@@ -13,6 +14,7 @@ const createProduct = asyncHandler(async (req, res) => {
     category,
     manufactureDate,
     expiryDate,
+    supplier
   } = req.body;
 
   const user = req.user;
@@ -32,6 +34,7 @@ const createProduct = asyncHandler(async (req, res) => {
     !category ||
     !manufactureDate ||
     !expiryDate
+    || !supplier
   ) {
     throw new ApiError(400, "All fields are required");
   }
@@ -61,6 +64,7 @@ const createProduct = asyncHandler(async (req, res) => {
     expiryDate,
     productImage: image.url,
     whoAdded: user._id,
+    supplier,
   });
 
   if (!product) {
@@ -74,7 +78,39 @@ const createProduct = asyncHandler(async (req, res) => {
 
 // Get all products
 const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  const products = await Product.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "supplier",
+        foreignField: "_id",
+        as: "supplierInfo",
+      },
+    },
+    {
+      $unwind: {
+        path: "$supplierInfo",
+        preserveNullAndEmptyArrays: true, 
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        description: 1,
+        price: 1,
+        quantity: 1,
+        category: 1,
+        manufactureDate: 1,
+        expiryDate: 1,
+        productImage: 1,
+        whoAdded: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        supplier: "$supplierInfo.name",
+      },
+    },
+  ]);
 
   if (!products || products.length === 0) {
     return res.status(200).json(new ApiResponse(200, [], "No products found"));
@@ -84,6 +120,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, products, "Products retrieved successfully"));
 });
+
 
 // Get product by ID
 const getProductById = asyncHandler(async (req, res) => {
@@ -107,20 +144,21 @@ const getProductById = asyncHandler(async (req, res) => {
 // Update product by ID
 const updateProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
-  const { name, description, price, category, manufactureDate, expiryDate } =
+  const { name, description, price, category, manufactureDate, expiryDate, supplier, quantity } =
     req.body;
 
   if (!mongoose.Types.ObjectId.isValid(productId)) {
     throw new ApiError(400, "Invalid product ID");
   }
-
+console.log(req.body);
   if (
     !name &&
     !description &&
     !price &&
     !category &&
     !manufactureDate &&
-    !expiryDate
+    !expiryDate && !supplier && !quantity
+    && !req.files?.productImage
   ) {
     throw new ApiError(400, "At least one field is required for update");
   }
@@ -132,6 +170,16 @@ const updateProduct = asyncHandler(async (req, res) => {
   if (category) updateObject.category = category;
   if (manufactureDate) updateObject.manufactureDate = manufactureDate;
   if (expiryDate) updateObject.expiryDate = expiryDate;
+  if (supplier) updateObject.supplier = supplier;
+  if (req.files?.productImage) {
+    const imageLocalPath = req.files.productImage[0].path;
+    const image = await uploadOnCloudinary(imageLocalPath);
+    if (!image || !image.url) {
+      throw new ApiError(400, "Failed to upload image");
+    }
+    updateObject.productImage = image.url;
+  }
+  if (quantity) updateObject.quantity = quantity;
 
   const updatedProduct = await Product.findByIdAndUpdate(
     productId,

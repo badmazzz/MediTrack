@@ -82,33 +82,12 @@ const createOrder = asyncHandler(async (req, res) => {
 const cancelOrder = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user._id;
-  const userRole = req.user.role;
 
-  const order = await Order.findById(orderId);
+  const order = await Order.findByIdAndDelete(orderId);
 
   if (!order) {
     throw new ApiError(404, "Order not found");
   }
-  if (userRole !== "admin" && order.user.toString() !== userId.toString()) {
-    throw new ApiError(403, "You are not authorized to cancel this order");
-  }
-
-  if (order.status === "cancelled") {
-    throw new ApiError(400, "Order is already cancelled");
-  }
-  if (order.status === "delivered") {
-    throw new ApiError(400, "Cannot cancel a delivered order");
-  }
-
-  if (order.status === "shipped" || order.status === "pending") {
-    for (const item of order.products) {
-      console.log(item.product);
-      await updateProductQuantity(item.product, item.quantity, false);
-    }
-  }
-
-  order.status = "cancelled";
-  await order.save();
 
   if (order.paymentStatus === "paid") {
     console.log("Payment refund initiated for order:", order._id);
@@ -130,50 +109,61 @@ const deleteCancelledOrder = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Cancelled orders deleted successfully"));
 });
 
-const updateOrderStatus = asyncHandler(async (req, res) => {
+const updateOrder = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
-  const { status } = req.body;
+  const { status, paymentStatus } = req.body;
 
-  const validStatuses = ["pending", "shipped", "delivered", "cancelled"];
-  if (!validStatuses.includes(status)) {
-    throw new ApiError(400, "Invalid status");
+  // Validate status if provided
+  if (status) {
+    const validStatuses = ["pending", "shipped", "delivered", "cancelled"];
+    if (!validStatuses.includes(status)) {
+      throw new ApiError(400, "Invalid order status");
+    }
   }
 
-  const order = await Order.findByIdAndUpdate(
-    orderId,
-    { status },
-    { new: true }
-  );
+  // Validate payment status if provided
+  if (paymentStatus) {
+    const validPaymentStatuses = ["pending", "paid", "failed"];
+    if (!validPaymentStatuses.includes(paymentStatus)) {
+      throw new ApiError(400, "Invalid payment status");
+    }
+  }
+
+  const updateFields = {};
+  if (status) updateFields.status = status;
+  if (paymentStatus) updateFields.paymentStatus = paymentStatus;
+
+  if (Object.keys(updateFields).length === 0) {
+    throw new ApiError(400, "No valid fields provided for update");
+  }
+
+  if (status === "cancelled") {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new ApiError(404, "Order not found");
+    }
+    for (const item of order.products) {
+      await updateProductQuantity(item.product, item.quantity, false);
+    }
+    if (order.paymentStatus === "paid") {
+      console.log("Payment refund initiated for order:", order._id);
+    }
+    if (order.status === "delivered") {
+      throw new ApiError(400, "Cannot cancel a delivered order");
+    }
+  }
+
+  const order = await Order.findByIdAndUpdate(orderId, updateFields, {
+    new: true,
+  }).populate("products.product");
+
   if (!order) {
     throw new ApiError(404, "Order not found");
   }
 
   res
     .status(200)
-    .json(new ApiResponse(200, order, "Order status updated successfully"));
-});
-
-const updatePaymentStatus = asyncHandler(async (req, res) => {
-  const { orderId } = req.params;
-  const { paymentStatus } = req.body;
-
-  const validPaymentStatuses = ["pending", "paid", "failed"];
-  if (!validPaymentStatuses.includes(paymentStatus)) {
-    throw new ApiError(400, "Invalid payment status");
-  }
-
-  const order = await Order.findByIdAndUpdate(
-    orderId,
-    { paymentStatus },
-    { new: true }
-  );
-  if (!order) {
-    throw new ApiError(404, "Order not found");
-  }
-
-  res
-    .status(200)
-    .json(new ApiResponse(200, order, "Payment status updated successfully"));
+    .json(new ApiResponse(200, order, "Order updated successfully"));
 });
 
 const orderDetails = asyncHandler(async (req, res) => {
@@ -309,14 +299,218 @@ const allOrders = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, orders, "All orders"));
 });
 
-const updatedProducts = asyncHandler(async (req, res) => {});
+const totalSell = asyncHandler(async (req, res) => {
+  const totalSell = await Order.aggregate([
+    {
+      $match: {
+        status: "delivered",
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: "$totalAmount" },
+      },
+    },
+  ]);
+
+  console.log(totalSell);
+
+  if (!totalSell) {
+    throw new ApiError(404, "No sales found");
+  }
+
+  res.status(200).json(new ApiResponse(200, totalSell, "Total sales"));
+});
+
+const totalOrders = asyncHandler(async (req, res) => {
+  const totalOrders = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrders) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res.status(200).json(new ApiResponse(200, totalOrders, "Total orders"));
+});
+
+const totalOrdersByStatus = asyncHandler(async (req, res) => {
+  const totalOrdersByStatus = await Order.aggregate([
+    {
+      $group: {
+        _id: "$status",
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByStatus) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, totalOrdersByStatus, "Total orders by status"));
+});
+
+const totalOrdersByPaymentStatus = asyncHandler(async (req, res) => {
+  const totalOrdersByPaymentStatus = await Order.aggregate([
+    {
+      $group: {
+        _id: "$paymentStatus",
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByPaymentStatus) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        totalOrdersByPaymentStatus,
+        "Total orders by payment status"
+      )
+    );
+});
+
+const totalOrdersByUser = asyncHandler(async (req, res) => {
+  const totalOrdersByUser = await Order.aggregate([
+    {
+      $group: {
+        _id: "$user",
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByUser) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, totalOrdersByUser, "Total orders by user"));
+});
+
+const totalOrdersByProduct = asyncHandler(async (req, res) => {
+  const totalOrdersByProduct = await Order.aggregate([
+    {
+      $unwind: "$products",
+    },
+    {
+      $group: {
+        _id: "$products.product",
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByProduct) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, totalOrdersByProduct, "Total orders by product")
+    );
+});
+
+const totalOrdersByDate = asyncHandler(async (req, res) => {
+  const totalOrdersByDate = await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByDate) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, totalOrdersByDate, "Total orders by date"));
+});
+
+const totalOrdersByMonth = asyncHandler(async (req, res) => {
+  const totalOrdersByMonth = await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByMonth) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, totalOrdersByMonth, "Total orders by month"));
+});
+
+const totalOrdersByYear = asyncHandler(async (req, res) => {
+  const totalOrdersByYear = await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y", date: "$createdAt" } },
+        totalOrders: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!totalOrdersByYear) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, totalOrdersByYear, "Total orders by year"));
+});
+
+const fetchAllOrders = async (req, res) => {
+  const orders = await Order.find()
+    .populate("user", "name email")
+    .populate("products.product", "name price");
+
+  if (!orders) {
+    throw new ApiError(404, "No orders found");
+  }
+
+  res.status(200).json(new ApiResponse(200, orders, "All orders"));
+};
 
 export {
   createOrder,
   cancelOrder,
   deleteCancelledOrder,
-  updateOrderStatus,
-  updatePaymentStatus,
+  updateOrder,
   orderDetails,
   allOrders,
+  totalSell,
+  totalOrders,
+  totalOrdersByStatus,
+  totalOrdersByPaymentStatus,
+  totalOrdersByUser,
+  totalOrdersByProduct,
+  totalOrdersByDate,
+  totalOrdersByMonth,
+  totalOrdersByYear,
+  fetchAllOrders,
 };

@@ -9,7 +9,7 @@ import "../src/styles/styles.css"
 import "aos/dist/aos.css";
 import AOS from "aos";
 import Login from "./pages/Login/Login.js";
-import ProductDetails from "./pages/Products/ProductDetails.js";
+import UserProfile from "./components/User Profile/UserProfile.js";
 
 
 
@@ -32,6 +32,7 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/orders" element={<OrderDetails />} />
+        <Route path="/edit-profile" element={<UserProfile />} />
       </Routes>
     </div>
   );

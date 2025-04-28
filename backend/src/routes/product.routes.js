@@ -37,7 +37,11 @@ router.route("/availability").get(checkProductAvailability);
 router
   .route("/:productId")
   .get(getProductById)
-  .patch(isAdmin, updateProduct) // Only admins can update products
+  .patch(
+    isAdmin,
+    upload.fields([{ name: "productImage", maxCount: 1 }]),
+    updateProduct
+  ) // Only admins can update products
   .delete(isAdmin, deleteProduct); // Only admins can delete products
 
 export default router;

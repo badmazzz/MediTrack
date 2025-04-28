@@ -328,6 +328,48 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (data) => {
+    try {
+      const response = await axios.patch(
+        `${meditrack}/users/update-account`,
+        data
+      );
+      const { user } = response.data.data;
+
+      console.log("User:", user);
+
+      localStorage.setItem("user", JSON.stringify(user));
+
+      setUser(user);
+      setShowLogin(false);
+      toast.success(response.data.message);
+    } catch (err) {
+      toast.error(parseErrorMessage(err.response.data));
+    }
+  };
+
+  const updateAvatar = async (avatar) => {
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+    try {
+      const response = await axios.patch(`${meditrack}/users/avatar`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const { user } = response.data.data;
+      console.log("User:", user);
+
+      localStorage.setItem("user", JSON.stringify(user));
+
+      setUser(user);
+      setShowLogin(false);
+      toast.success("Avatar updated successfully");
+    } catch (err) {
+      toast.error(parseErrorMessage(err.response.data));
+    }
+  };
+
   return (
     <StoreContext.Provider
       value={{
@@ -374,6 +416,8 @@ export const StoreProvider = ({ children }) => {
         getOrders,
         orderDetails,
         setOrderDetails,
+        updateProfile,
+        updateAvatar,
       }}
     >
       {children}

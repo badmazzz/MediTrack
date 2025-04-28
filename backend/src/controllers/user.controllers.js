@@ -305,6 +305,72 @@ const updateUserRole = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user }, "User role updated"));
 });
 
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().select("-password -refreshToken");
+
+  if (!users) {
+    throw new ApiError(404, "No users found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { users }, "Users fetched successfully"));
+}
+);
+
+const fetchSuppliers = asyncHandler(async (req, res) => {
+  const suppliers = await User.find({ role: "supplier" }).select(
+    "-password -refreshToken"
+  );
+
+  if (!suppliers) {
+    throw new ApiError(404, "No suppliers found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { suppliers }, "Suppliers fetched successfully"));
+});
+const fetchCustomers = asyncHandler(async (req, res) => {
+  const customers = await User.find({ role: "customer" }).select(
+    "-password -refreshToken"
+  );
+
+  if (!customers) {
+    throw new ApiError(404, "No customers found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { customers }, "Customers fetched successfully"));
+});
+const fetchEmployees = asyncHandler(async (req, res) => {
+  const employees = await User.find({ role: "employee" }).select(
+    "-password -refreshToken"
+  );
+
+  if (!employees) {
+    throw new ApiError(404, "No employees found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { employees }, "Employees fetched successfully"));
+});
+const fetchAdmins = asyncHandler(async (req, res) => {
+  const admins = await User.find({ role: "admin" }).select(
+    "-password -refreshToken"
+  );
+
+  if (!admins) {
+    throw new ApiError(404, "No admins found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { admins }, "Admins fetched successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -316,4 +382,9 @@ export {
   refreshAccessToken,
   deleteAccount,
   updateUserRole,
+  getAllUsers,
+  fetchSuppliers,
+  fetchCustomers,
+  fetchEmployees,
+  fetchAdmins,
 };

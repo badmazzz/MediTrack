@@ -138,10 +138,56 @@ const productCategories = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, categories));
 });
 
+const totalProducts = asyncHandler(async (req, res) => {
+  const total = await Product.countDocuments();
+  res.status(200).json(new ApiResponse(200, total));
+}
+);
+const totalProductsByCategory = asyncHandler(async (req, res) => {
+  const { category } = req.params;
+
+  if (!category) {
+    throw new ApiError(400, "Category is required");
+  }
+
+  const total = await Product.countDocuments({ category });
+  res.status(200).json(new ApiResponse(200, total));
+});
+const totalProductsByExpiryDate = asyncHandler(async (req, res) => {
+  const { expiryDate } = req.params;
+
+  if (!expiryDate) {
+    throw new ApiError(400, "Expiry date is required");
+  }
+
+  const total = await Product.countDocuments({ expiryDate });
+  res.status(200).json(new ApiResponse(200, total));
+});
+
+const totalStockValue = asyncHandler(async (req, res) => {
+  const totalValue = await Product.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalValue: { $sum: { $multiply: ["$price", "$quantity"] } },
+      },
+    },
+  ]);
+
+  res.status(200).json(
+    new ApiResponse(200, totalValue[0].totalValue, "Total stock value")
+  );
+});
+
 export {
   productStock,
   restockProduct,
   expiryDateAlerts,
   lowStockAlerts,
   inventoryLogs,
+  productCategories,
+  totalProducts,
+  totalProductsByCategory,
+  totalProductsByExpiryDate,
+  totalStockValue,
 };

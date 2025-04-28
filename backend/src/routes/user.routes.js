@@ -10,6 +10,11 @@ import {
   updateUserAvatar,
   deleteAccount,
   updateUserRole,
+  getAllUsers,
+  fetchSuppliers,
+    fetchCustomers,
+    fetchEmployees,
+    fetchAdmins,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { isAdmin, verifyJWT } from "../middlewares/auth.middlewares.js";
@@ -37,5 +42,11 @@ router
 
 router.route("/delete-account").delete(verifyJWT, deleteAccount);
 router.route("/update-role").patch(verifyJWT, isAdmin, updateUserRole);
+router.route("/all-users").get(verifyJWT, isAdmin, getAllUsers);
+router.route("/suppliers").get(verifyJWT, isAdmin, fetchSuppliers);
+router.route("/customers").get(verifyJWT, isAdmin, fetchCustomers);
+router.route("/employees").get(verifyJWT, isAdmin, fetchEmployees);
+router.route("/admins").get(verifyJWT, isAdmin, fetchAdmins);
+
 
 export default router;
